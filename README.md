@@ -1,6 +1,6 @@
 # Docker Learning - NestJS App
 
-A NestJS application containerized with Docker using multi-stage builds.
+A NestJS application containerized with Docker using multi-stage builds, backed by a MySQL service via Compose.
 
 ## Build
 
@@ -22,4 +22,9 @@ The app will be available at `http://localhost:3000`
 npm install
 npm run start:dev
 ```
+
+## Docker Compose
+
+`docker-compose up --build` brings up two services:
+
 
