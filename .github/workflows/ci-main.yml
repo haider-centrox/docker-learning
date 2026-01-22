@@ -42,14 +42,14 @@ jobs:
 
       # Frontend tests
       - name: Install frontend dependencies
-        run: cd frontend && npm ci
+        run: cd frontend && npm install
 
       - name: Build frontend
         run: cd frontend && npm run build
 
       # Backend tests
       - name: Install backend dependencies
-        run: cd backend && npm ci
+        run: cd backend && npm install
 
       - name: Lint backend
         run: cd backend && npm run lint
