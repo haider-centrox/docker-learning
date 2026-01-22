@@ -1,0 +1,52 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    "@semantic-release/npm",
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["package.json", "CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ],
+  "preset": "conventionalcommits",
+  "releaseRules": [
+    {"type": "feat", "release": "minor"},
+    {"type": "fix", "release": "patch"},
+    {"type": "docs", "release": "patch"},
+    {"type": "chore", "release": "patch"},
+    {"type": "refactor", "release": "patch"},
+    {"type": "perf", "release": "patch"},
+    {"type": "test", "release": "patch"},
+    {"type": "build", "release": "patch"},
+    {"type": "ci", "release": "patch"},
+    {"type": "revert", "release": "patch"},
+    {"type": "style", "release": "patch"},
+    {"scope": "major", "release": "major"},
+    {"scope": "minor", "release": "minor"},
+    {"scope": "patch", "release": "patch"},
+    {"breaking": true, "release": "major"}
+  ],
+  "parserOpts": {
+    "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+  },
+  "writerOpts": {
+    "commitsSort": ["scope", "subject"],
+    "groups": [
+      {"title": "Breaking Changes", "emoji": "BREAKING", "commit": "breaking"},
+      {"title": "Features", "emoji": "✨", "commit": "feat"},
+      {"title": "Bug Fixes", "emoji": "🐛", "commit": "fix"},
+      {"title": "Performance", "emoji": "⚡", "commit": "perf"},
+      {"title": "Documentation", "emoji": "📝", "commit": "docs"},
+      {"title": "Refactoring", "emoji": "♻️", "commit": "refactor"},
+      {"title": "Testing", "emoji": "✅", "commit": "test"},
+      {"title": "Build", "emoji": "📦", "commit": "build"},
+      {"title": "CI/CD", "emoji": "👷", "commit": "ci"}
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+# Development override file
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+version: '3.9'
+
+services:
+  frontend:
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+
+  backend:
+    environment:
+      - NODE_ENV=development
+    command: npm run start:dev
+    volumes:
+      - ./backend/src:/app/src:ro
+
+  mongodb:
+    ports:
+      - "27017:27017"
+
+  prometheus:
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_TELEMETRY_ENABLED=false
