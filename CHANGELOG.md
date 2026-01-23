@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/haider-centrox/docker-learning/compare/v1.0.0...v1.1.0) (2026-01-23)
+
+
+### Features
+
+* cicd fix ([a593577](https://github.com/haider-centrox/docker-learning/commit/a593577f40474136db9c7983e9386aecb4c10749))
+
 ## 1.0.0 (2026-01-22)
 
 
