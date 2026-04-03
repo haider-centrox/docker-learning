@@ -1,0 +1,399 @@
+{
+  "info": {
+    "name": "Exceptional Learning API",
+    "_postman_id": "exceptional-learning-api-v4",
+    "description": "5 folders:\n1. Teacher Auth — /api/auth\n2. Teacher - Students — /api/students\n3. Student Auth — /api/student-auth\n4. Student Progress — /api/student/:studentId/progress\n5. Student Token Board — /api/student/:studentId/tokenboard",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000", "type": "string" },
+    { "key": "teacherToken", "value": "", "type": "string", "description": "Auto-set on teacher login/verify" },
+    { "key": "studentToken", "value": "", "type": "string", "description": "Auto-set on student login" },
+    { "key": "studentId", "value": "", "type": "string", "description": "Auto-set on create student" },
+    { "key": "progressId", "value": "", "type": "string", "description": "Auto-set on save progress" }
+  ],
+  "item": [
+    {
+      "name": "1. Teacher Auth",
+      "description": "All teacher authentication routes. Base: /api/auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/signup", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Teacher\",\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "description": "Registers a new teacher. Sends 4-digit OTP to email."
+          }
+        },
+        {
+          "name": "Verify Signup OTP",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('teacherToken', r.data.accessToken);"],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/signup/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup", "verify"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\"\n}" },
+            "description": "Verifies OTP. teacherToken auto-saved."
+          }
+        },
+        {
+          "name": "Resend Signup OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/resend-signup-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-signup-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('teacherToken', r.data.accessToken);"],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\"\n}" },
+            "description": "teacherToken auto-saved."
+          }
+        },
+        {
+          "name": "Buy Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{teacherToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/auth/buyplan", "host": ["{{baseUrl}}"], "path": ["api", "auth", "buyplan"] },
+            "body": { "mode": "raw", "raw": "{\n  \"paymentSuccessfull\": true,\n  \"plan\": \"individual\"\n}" },
+            "description": "plan: individual (5 students), family (15), company (30)"
+          }
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/password/request", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
+          }
+        },
+        {
+          "name": "Verify Reset OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/password/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "verify"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\"\n}" }
+          }
+        },
+        {
+          "name": "Set New Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/password/reset", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "reset"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\",\n  \"newPassword\": \"newpassword123\"\n}" }
+          }
+        },
+        {
+          "name": "Resend Reset OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/resend-reset-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-reset-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
+          }
+        },
+        {
+          "name": "Edit Account",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/account/edit", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "edit"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "John Updated", "type": "text" },
+                { "key": "email", "value": "updated@example.com", "type": "text" },
+                { "key": "profileImage", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/account/delete", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "delete"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Teacher - Students",
+      "description": "Teacher manages student profiles. Base: /api/students. Requires teacher JWT.",
+      "item": [
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] },
+            "description": "Returns all students owned by the authenticated teacher. Code field excluded."
+          }
+        },
+        {
+          "name": "Create Student",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["const r = pm.response.json(); if (r.data?._id) pm.collectionVariables.set('studentId', r.data._id);"],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Alice", "type": "text" },
+                { "key": "age", "value": "7", "type": "text" },
+                { "key": "email", "value": "student@example.com", "type": "text" },
+                { "key": "code", "value": "1234", "type": "text", "description": "4-digit numeric PIN for student login" },
+                { "key": "profileImage", "type": "file", "src": "" }
+              ]
+            },
+            "description": "email and code (4-digit) required. studentId auto-saved."
+          }
+        },
+        {
+          "name": "Edit Student",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Alice Updated", "type": "text" },
+                { "key": "age", "value": "8", "type": "text" },
+                { "key": "code", "value": "5678", "type": "text", "description": "Optional: update 4-digit code" },
+                { "key": "profileImage", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Student Auth",
+      "description": "Student-facing authentication. Base: /api/student-auth. Public — no token needed.",
+      "item": [
+        {
+          "name": "Student Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('studentToken', r.data.accessToken);"],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/student-auth/login", "host": ["{{baseUrl}}"], "path": ["api", "student-auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@example.com\",\n  \"code\": \"1234\"\n}" },
+            "description": "Student logs in with email + 4-digit code. Returns JWT with role: student. studentToken auto-saved."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Student Progress",
+      "description": "Teacher manages progress entries per student. Base: /api/student/:studentId/progress. Requires teacher JWT.",
+      "item": [
+        {
+          "name": "Save Progress (URL images)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": ["const r = pm.response.json(); if (r.data?._id) pm.collectionVariables.set('progressId', r.data._id);"],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"images\": [\n    { \"index\": 0, \"url\": \"https://example.com/image1.jpg\" },\n    { \"index\": 1, \"url\": \"https://example.com/image2.jpg\" }\n  ],\n  \"rewardImage\": \"https://example.com/reward.jpg\"\n}"
+            },
+            "description": "progressId auto-saved."
+          }
+        },
+        {
+          "name": "Save Progress (Upload to S3)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/upload", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "upload"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "images", "type": "file", "src": "" },
+                { "key": "images", "type": "file", "src": "" }
+              ]
+            },
+            "description": "Upload up to 10 image files. Stored in S3."
+          }
+        },
+        {
+          "name": "Get All Progress",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/{{studentId}}/progress?limit=10&skip=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "student", "{{studentId}}", "progress"],
+              "query": [{ "key": "limit", "value": "10" }, { "key": "skip", "value": "0" }]
+            }
+          }
+        },
+        {
+          "name": "Get Single Progress",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] }
+          }
+        },
+        {
+          "name": "Update Progress",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"images\": [\n    { \"index\": 0, \"url\": \"https://example.com/updated.jpg\" }\n  ],\n  \"rewardImage\": \"https://example.com/new-reward.jpg\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Progress",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] }
+          }
+        },
+        {
+          "name": "Add Reward Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}/reward", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}", "reward"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "rewardImage", "type": "file", "src": "" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Student Token Board",
+      "description": "Teacher manages the 5-token reward board per student. Base: /api/student/:studentId/tokenboard. Requires teacher JWT.",
+      "item": [
+        {
+          "name": "Get or Create Token Board",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/tokenboard", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "tokenboard"] },
+            "description": "Returns existing board or creates one with 5 inactive tokens."
+          }
+        },
+        {
+          "name": "Update Token",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/tokenboard/token", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "tokenboard", "token"] },
+            "body": { "mode": "raw", "raw": "{\n  \"index\": 1,\n  \"isActive\": true\n}" },
+            "description": "index: 1–5. isActive: true or false."
+          }
+        },
+        {
+          "name": "Update Reward URL",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/tokenboard/reward", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "tokenboard", "reward"] },
+            "body": { "mode": "raw", "raw": "{\n  \"rewardUrl\": \"https://example.com/reward-video.mp4\"\n}" }
+          }
+        },
+        {
+          "name": "Reset Token Board",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/tokenboard/reset", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "tokenboard", "reset"] },
+            "description": "Resets all 5 tokens to isActive: false."
+          }
+        },
+        {
+          "name": "Delete Token Board",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/tokenboard", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "tokenboard"] }
+          }
+        }
+      ]
+    }
+  ]
+}
