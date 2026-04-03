@@ -1,5 +1,8 @@
 {
   "permissions": {
-    "allow": ["Bash(npm install:*)", "Bash(npm run build:*)"]
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)"
+    ]
   }
 }
