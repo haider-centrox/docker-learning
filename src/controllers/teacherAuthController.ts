@@ -15,8 +15,8 @@ dotenv.config();
 // SIGNUP
 export const signup = async (req: Request, res: Response) => {
   try {
-    console.log(req)
     const { name, email, password } = req.body;
+    console.log("signup attempt:", email);
 
     const existingUser = await User.findOne({ email });
     console.log("🚀 ~ signup ~ existingUser:", existingUser)
@@ -180,9 +180,9 @@ export const buyPlan = async (req: Request, res: Response) => {
   if (!user) return res.status(404).json({ message: "User not found" });
   user.paymentSuccessfull = paymentSuccessfull;
   user.plan.type = plan;
-  if (plan === "individual") user.plan.childLimit = 5;
-  else if (plan === "family") user.plan.childLimit = 15;
-  else if (plan === "company") user.plan.childLimit = 30;
+  if (plan === "individual") user.plan.studentLimit = 5;
+  else if (plan === "family") user.plan.studentLimit = 15;
+  else if (plan === "company") user.plan.studentLimit = 30;
   await user.save();
   const accessToken = Jwt.sign(
     {

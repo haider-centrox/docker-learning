@@ -12,7 +12,7 @@ import {
   deleteAccount,
   buyPlan,
 } from "../controllers/teacherAuthController";
-import { authMiddleware } from "../middlewares/auth";
+import { teacherMiddleware } from "../middlewares/auth";
 import { upload } from "../config/multer";
 
 const router = Router();
@@ -25,9 +25,8 @@ router.post("/password/verify", verifyResetOtp);
 router.post("/password/reset", setNewPassword);
 router.post("/resend-signup-otp", resendSignupOtp);
 router.post("/resend-reset-otp", resendResetOtp);
-router.post("/buyplan", authMiddleware, buyPlan);
-// Protected routes
-router.put("/account/edit", authMiddleware, upload.single("profileImage"), editAccount);
-router.delete("/account/delete", authMiddleware, deleteAccount);
+router.post("/buyplan", teacherMiddleware, buyPlan);
+router.put("/account/edit", teacherMiddleware, upload.single("profileImage"), editAccount);
+router.delete("/account/delete", teacherMiddleware, deleteAccount);
 
 export default router;

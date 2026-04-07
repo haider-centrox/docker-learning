@@ -6,6 +6,7 @@ import studentRoutes from "./routes/studentRoutes";
 import studentAuthRoutes from "./routes/studentAuthRoutes";
 import studentProgressRoutes from "./routes/studentProgressRoutes";
 import studentTokenBoardRoutes from "./routes/studentTokenBoardRoutes";
+import teacherTokenBoardRoutes from "./routes/teacherTokenBoardRoutes";
 
 dotenv.config();
 const app = express();
@@ -14,8 +15,9 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/student-auth", studentAuthRoutes);
+app.use("/api/student/tokenboard", studentTokenBoardRoutes);
 app.use("/api/student", studentProgressRoutes);
-app.use("/api/student", studentTokenBoardRoutes);
+app.use("/api/teacher/tokenboards", teacherTokenBoardRoutes);
 
 app.get("/", (_req, res) => res.send("API is running"));
 

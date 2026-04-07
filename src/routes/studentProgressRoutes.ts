@@ -8,11 +8,11 @@ import {
   deleteStudentProgress,
   addRewardImage,
 } from "../controllers/studentProgressController";
-import { authMiddleware } from "../middlewares/auth";
+import { teacherMiddleware } from "../middlewares/auth";
 import { upload } from "../config/multer";
 
 const router = Router();
-router.use(authMiddleware);
+router.use(teacherMiddleware);
 
 router.post("/:studentId/progress", saveStudentProgress);
 router.post("/:studentId/progress/upload", upload.array("images", 10), saveStudentProgressWithImages);

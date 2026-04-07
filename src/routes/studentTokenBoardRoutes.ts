@@ -1,20 +1,18 @@
 import { Router } from "express";
 import {
-  getOrCreateTokenBoard,
-  updateTokenIndex,
-  updateRewardUrl,
-  resetTokenBoard,
-  deleteTokenBoard,
+  getMyTokenBoard,
+  getMyAllTokenBoards,
+  completeToken,
+  completeBoard,
 } from "../controllers/studentTokenBoardController";
-import { authMiddleware } from "../middlewares/auth";
+import { studentMiddleware } from "../middlewares/auth";
 
 const router = Router();
-router.use(authMiddleware);
+router.use(studentMiddleware);
 
-router.get("/:studentId/tokenboard", getOrCreateTokenBoard);
-router.put("/:studentId/tokenboard/token", updateTokenIndex);
-router.put("/:studentId/tokenboard/reward", updateRewardUrl);
-router.post("/:studentId/tokenboard/reset", resetTokenBoard);
-router.delete("/:studentId/tokenboard", deleteTokenBoard);
+router.get("/", getMyTokenBoard);
+router.get("/all", getMyAllTokenBoards);
+router.put("/token", completeToken);
+router.post("/complete", completeBoard);
 
 export default router;

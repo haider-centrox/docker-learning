@@ -6,6 +6,7 @@ export interface IStudent extends Document {
   age: number;
   email: string;
   code: string; // 4-digit PIN (hashed)
+  role: "student";
   profileImage?: string;
   teacher: Types.ObjectId;
   linkedFromTeacher?: {
@@ -21,6 +22,7 @@ const StudentSchema = new Schema<IStudent>(
     age: { type: Number, required: false },
     email: { type: String, required: true, unique: true, lowercase: true },
     code: { type: String, required: true },
+    role: { type: String, enum: ["student"], default: "student" },
     profileImage: { type: String, required: false },
     teacher: { type: Schema.Types.ObjectId, ref: "User", required: true },
     linkedFromTeacher: {

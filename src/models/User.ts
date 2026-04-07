@@ -7,13 +7,13 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "teacher" | "admin";
+  role: "teacher";
   paymentSuccessfull: boolean;
   isVerified: boolean;
   profileImage?: string;
   plan: {
     type: PlanType;
-    childLimit: number;
+    studentLimit: number;
   };
   comparePassword(candidate: string): Promise<boolean>;
 }
@@ -26,7 +26,7 @@ const UserSchema = new Schema<IUser>(
 
     role: {
       type: String,
-      enum: ["teacher", "admin"],
+      enum: ["teacher"],
       default: "teacher",
     },
 
@@ -40,7 +40,7 @@ const UserSchema = new Schema<IUser>(
         enum: ["", "individual", "family", "company"],
         default: "",
       },
-      childLimit: { type: Number, default: 5 },
+      studentLimit: { type: Number, default: 5 },
     } as any, // 👈 key fix
   },
   { timestamps: true }

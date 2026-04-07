@@ -13,7 +13,7 @@ export const createStudent = async (req: Request, res: Response) => {
     if (!user) return res.status(401).json({ message: "Unauthorized" });
 
     const count = await Student.countDocuments({ teacher: user._id });
-    if (count >= user.plan.childLimit)
+    if (count >= user.plan.studentLimit)
       return res
         .status(403)
         .json({ message: `Student limit reached for ${user.plan.type} plan` });
@@ -68,7 +68,9 @@ export const createStudent = async (req: Request, res: Response) => {
 export const listStudents = async (req: Request, res: Response) => {
   try {
     const user = req.user;
+    console.log("listStudents — teacher id:", user._id);
     const students = await Student.find({ teacher: user._id }).select("-code");
+    console.log("listStudents — found:", students.length);
     res.status(200).json({
       message: "Students fetched successfully",
       data: students,

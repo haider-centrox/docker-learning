@@ -1,140 +1,97 @@
 import { Request, Response } from "express";
-import { StudentTokenBoardProgress } from "../models/StudentTokenBoardProgress";
-import { Student } from "../models/Student";
-import { ITokenBoardItem } from "../models/StudentTokenBoardProgress";
+import { StudentTokenBoard } from "../models/StudentTokenBoard";
 
-const defaultTokens = () => [
-  { index: 1, isActive: false },
-  { index: 2, isActive: false },
-  { index: 3, isActive: false },
-  { index: 4, isActive: false },
-  { index: 5, isActive: false },
-];
-
-// Get or Create Token Board for a Student
-export const getOrCreateTokenBoard = async (req: Request, res: Response) => {
+// Get student's active assigned token board
+export const getMyTokenBoard = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    const { studentId } = req.params;
+    const student = req.student;
 
-    const student = await Student.findOne({ _id: studentId, teacher: user._id });
-    if (!student) return res.status(404).json({ message: "Student not found" });
+    const board = await StudentTokenBoard.findOne({
+      student: student._id,
+      isCompleted: false,
+    });
 
-    let tokenBoard = await StudentTokenBoardProgress.findOne({ studentId });
-
-    if (!tokenBoard) {
-      tokenBoard = new StudentTokenBoardProgress({ studentId, tokens: defaultTokens() });
-      await tokenBoard.save();
+    if (!board) {
+      return res.status(404).json({ message: "No active token board assigned" });
     }
 
-    res.status(200).json({ message: "Token board fetched successfully", data: tokenBoard });
+    res.status(200).json({ message: "Token board fetched successfully", data: board });
   } catch (error) {
-    console.error("Error fetching/creating token board:", error);
+    console.error("Error fetching student token board:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Update Token Index
-export const updateTokenIndex = async (req: Request, res: Response) => {
+// Get all token boards (including completed ones)
+export const getMyAllTokenBoards = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    const { studentId } = req.params;
-    const { index, isActive } = req.body;
+    const student = req.student;
 
-    if (index === undefined || index < 1 || index > 5) {
-      return res.status(400).json({ message: "Index must be between 1 and 5" });
-    }
+    const boards = await StudentTokenBoard.find({ student: student._id })
+      .sort({ createdAt: -1 });
 
-    if (typeof isActive !== "boolean") {
-      return res.status(400).json({ message: "isActive must be a boolean value" });
-    }
-
-    const student = await Student.findOne({ _id: studentId, teacher: user._id });
-    if (!student) return res.status(404).json({ message: "Student not found" });
-
-    let tokenBoard = await StudentTokenBoardProgress.findOne({ studentId });
-
-    if (!tokenBoard) {
-      tokenBoard = new StudentTokenBoardProgress({ studentId, tokens: defaultTokens() });
-    }
-
-    const tokenIndex = tokenBoard.tokens.findIndex((t) => t.index === index);
-    if (tokenIndex === -1) return res.status(400).json({ message: "Invalid token index" });
-
-    tokenBoard.tokens[tokenIndex].isActive = isActive;
-    await tokenBoard.save();
-
-    res.status(200).json({ message: "Token updated successfully", data: tokenBoard });
+    res.status(200).json({ message: "Token boards fetched successfully", data: boards });
   } catch (error) {
-    console.error("Error updating token:", error);
+    console.error("Error fetching student token boards:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Update Reward URL
-export const updateRewardUrl = async (req: Request, res: Response) => {
+// Mark a token as completed
+export const completeToken = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    const { studentId } = req.params;
-    const { rewardUrl } = req.body;
+    const student = req.student;
+    const { index } = req.body;
 
-    const student = await Student.findOne({ _id: studentId, teacher: user._id });
-    if (!student) return res.status(404).json({ message: "Student not found" });
-
-    let tokenBoard = await StudentTokenBoardProgress.findOne({ studentId });
-
-    if (!tokenBoard) {
-      tokenBoard = new StudentTokenBoardProgress({ studentId, tokens: defaultTokens(), rewardUrl: rewardUrl || undefined });
-    } else {
-      tokenBoard.rewardUrl = rewardUrl || undefined;
+    if (typeof index !== "number" || index < 1 || index > 5) {
+      return res.status(400).json({ message: "index must be a number between 1 and 5" });
     }
 
-    await tokenBoard.save();
+    const board = await StudentTokenBoard.findOne({
+      student: student._id,
+      isCompleted: false,
+    });
 
-    res.status(200).json({ message: "Reward URL updated successfully", data: tokenBoard });
+    if (!board) {
+      return res.status(404).json({ message: "No active token board found" });
+    }
+
+    const tokenIndex = board.tokens.findIndex((t) => t.index === index);
+    if (tokenIndex === -1) {
+      return res.status(400).json({ message: "Token index not found on this board" });
+    }
+
+    board.tokens[tokenIndex].isCompleted = true;
+    await board.save();
+
+    res.status(200).json({ message: "Token marked as completed", data: board });
   } catch (error) {
-    console.error("Error updating reward URL:", error);
+    console.error("Error completing token:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Reset Token Board
-export const resetTokenBoard = async (req: Request, res: Response) => {
+// Mark the entire board as complete
+export const completeBoard = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    const { studentId } = req.params;
+    const student = req.student;
 
-    const student = await Student.findOne({ _id: studentId, teacher: user._id });
-    if (!student) return res.status(404).json({ message: "Student not found" });
+    const board = await StudentTokenBoard.findOne({
+      student: student._id,
+      isCompleted: false,
+    });
 
-    const tokenBoard = await StudentTokenBoardProgress.findOne({ studentId });
-    if (!tokenBoard) return res.status(404).json({ message: "Token board not found" });
+    if (!board) {
+      return res.status(404).json({ message: "No active token board found" });
+    }
 
-    tokenBoard.tokens = tokenBoard.tokens.map((t: ITokenBoardItem) => ({ index: t.index, isActive: false }));
-    await tokenBoard.save();
+    board.isCompleted = true;
+    board.completedAt = new Date();
+    await board.save();
 
-    res.status(200).json({ message: "Token board reset successfully", data: tokenBoard });
+    res.status(200).json({ message: "Token board marked as complete", data: board });
   } catch (error) {
-    console.error("Error resetting token board:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-// Delete Token Board
-export const deleteTokenBoard = async (req: Request, res: Response) => {
-  try {
-    const user = req.user;
-    const { studentId } = req.params;
-
-    const student = await Student.findOne({ _id: studentId, teacher: user._id });
-    if (!student) return res.status(404).json({ message: "Student not found" });
-
-    const result = await StudentTokenBoardProgress.findOneAndDelete({ studentId });
-    if (!result) return res.status(404).json({ message: "Token board not found" });
-
-    res.status(200).json({ message: "Token board deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting token board:", error);
+    console.error("Error completing board:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

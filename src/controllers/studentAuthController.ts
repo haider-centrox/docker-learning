@@ -22,11 +22,13 @@ export const studentLogin = async (req: Request, res: Response) => {
       process.env.JWT_SEC as string
     );
 
+    const { code: _code, ...studentData } = student.toObject();
+
     res.status(200).json({
       message: "Student logged in successfully",
       data: {
         accessToken: token,
-        student,
+        student: studentData,
       },
     });
   } catch (error) {

@@ -26,7 +26,6 @@
 //       });
 //     }
 
-
 //     // 2️⃣ Fetch from S3
 //     let isTruncated = true;
 //     let continuationToken: string | undefined;
