@@ -9,6 +9,7 @@ export interface ITokenBoard extends Document {
   title?: string;
   tokens: ITokenItem[]; // up to 5 tokens (index only)
   rewardUrl: string;
+  rewardName?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,6 +31,7 @@ const TokenBoardSchema = new Schema<ITokenBoard>(
       },
     },
     rewardUrl: { type: String, required: true },
+    rewardName: { type: String, required: false },
   },
   { timestamps: true }
 );

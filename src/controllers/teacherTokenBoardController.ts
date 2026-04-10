@@ -130,13 +130,6 @@ export const assignTokenBoard = async (req: Request, res: Response) => {
         continue;
       }
 
-      // Check if student already has an active (incomplete) board
-      const existing = await StudentTokenBoard.findOne({ student: studentId, isCompleted: false });
-      if (existing) {
-        results.push({ studentId, status: "skipped", reason: "Student already has an active token board" });
-        continue;
-      }
-
       // Create a copy of the board for this student
       const studentBoard = new StudentTokenBoard({
         student: studentId,
@@ -148,6 +141,7 @@ export const assignTokenBoard = async (req: Request, res: Response) => {
           isCompleted: false,
         })),
         rewardUrl: board.rewardUrl,
+        rewardName: board.rewardName,
         isCompleted: false,
       });
 

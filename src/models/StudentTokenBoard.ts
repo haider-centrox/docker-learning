@@ -12,6 +12,7 @@ export interface IStudentTokenBoard extends Document {
   title?: string;
   tokens: IStudentToken[];
   rewardUrl: string;
+  rewardName?: string;
   isCompleted: boolean;
   completedAt?: Date;
   createdAt: Date;
@@ -31,6 +32,7 @@ const StudentTokenBoardSchema = new Schema<IStudentTokenBoard>(
     title: { type: String, required: false },
     tokens: { type: [StudentTokenSchema], required: true },
     rewardUrl: { type: String, required: true },
+    rewardName: { type: String, required: false },
     isCompleted: { type: Boolean, default: false },
     completedAt: { type: Date },
   },

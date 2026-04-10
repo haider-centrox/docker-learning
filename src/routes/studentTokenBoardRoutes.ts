@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getMyTokenBoard,
   getMyAllTokenBoards,
+  getTokenBoardById,
   completeToken,
   completeBoard,
 } from "../controllers/studentTokenBoardController";
@@ -12,6 +13,7 @@ router.use(studentMiddleware);
 
 router.get("/", getMyTokenBoard);
 router.get("/all", getMyAllTokenBoards);
+router.get("/:id", getTokenBoardById);
 router.put("/token", completeToken);
 router.post("/complete", completeBoard);
 

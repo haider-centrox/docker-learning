@@ -36,3 +36,15 @@ export const studentLogin = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Get My Profile
+export const getMyProfile = async (req: Request, res: Response) => {
+  try {
+    const student = req.student;
+    const { code: _code, ...studentData } = student.toObject();
+    res.json({ message: "Profile fetched successfully", data: studentData });
+  } catch (error) {
+    console.error("Error fetching student profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

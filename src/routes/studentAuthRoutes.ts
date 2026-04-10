@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { studentLogin } from "../controllers/studentAuthController";
+import { studentLogin, getMyProfile } from "../controllers/studentAuthController";
+import { studentMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
-// Public — student logs in with email + 4-digit code
 router.post("/login", studentLogin);
+router.get("/self", studentMiddleware, getMyProfile);
 
 export default router;

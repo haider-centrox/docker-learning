@@ -11,6 +11,7 @@ import {
   editAccount,
   deleteAccount,
   buyPlan,
+  getMyProfile,
 } from "../controllers/teacherAuthController";
 import { teacherMiddleware } from "../middlewares/auth";
 import { upload } from "../config/multer";
@@ -26,6 +27,7 @@ router.post("/password/reset", setNewPassword);
 router.post("/resend-signup-otp", resendSignupOtp);
 router.post("/resend-reset-otp", resendResetOtp);
 router.post("/buyplan", teacherMiddleware, buyPlan);
+router.get("/self", teacherMiddleware, getMyProfile);
 router.put("/account/edit", teacherMiddleware, upload.single("profileImage"), editAccount);
 router.delete("/account/delete", teacherMiddleware, deleteAccount);
 

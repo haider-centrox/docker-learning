@@ -1,381 +1,203 @@
 {
   "info": {
-    "name": "Exceptional Learning API",
-    "_postman_id": "exceptional-learning-api-v5",
-    "description": "Folders:\n1. Teacher Auth — /api/auth\n2. Teacher - Students — /api/students\n3. Teacher - Token Boards — /api/teacher/tokenboards\n4. Student Auth — /api/student-auth\n5. Student - Token Board — /api/student/tokenboard\n6. Student Progress — /api/student/:studentId/progress",
+    "_postman_id": "exceptional-learning-v3",
+    "name": "Exceptional Learning",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:4000", "type": "string" },
-    { "key": "teacherToken", "value": "", "type": "string", "description": "Auto-set on teacher login/verify" },
-    { "key": "studentToken", "value": "", "type": "string", "description": "Auto-set on student login" },
-    { "key": "studentId", "value": "", "type": "string", "description": "Auto-set on create student" },
-    { "key": "tokenBoardId", "value": "", "type": "string", "description": "Auto-set on create token board" },
-    { "key": "progressId", "value": "", "type": "string", "description": "Auto-set on save progress" }
+    { "key": "baseUrl", "value": "https://docker-learning-9rq3.onrender.com" },
+    { "key": "teacherToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "studentId", "value": "" },
+    { "key": "tokenBoardId", "value": "" },
+    { "key": "studentTokenBoardId", "value": "" },
+    { "key": "pictureScheduleId", "value": "" },
+    { "key": "studentPictureScheduleId", "value": "" },
+    { "key": "firstThenChartId", "value": "" },
+    { "key": "studentFirstThenChartId", "value": "" },
+    { "key": "progressId", "value": "" },
+    { "key": "visualTimerId", "value": "" },
+    { "key": "studentVisualTimerId", "value": "" },
+    { "key": "studentNarrativeId", "value": "" }
   ],
   "item": [
     {
-      "name": "1. Teacher Auth",
-      "description": "Teacher registration, login, and account management. Base: /api/auth",
+      "name": "TEACHER",
       "item": [
         {
-          "name": "Signup",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/signup", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup"] },
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"John Teacher\",\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\"\n}" }
-          }
+          "name": "Auth",
+          "item": [
+            { "name": "Signup", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/signup", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Teacher Name\",\n  \"email\": \"teacher@yopmail.com\",\n  \"password\": \"12345678\"\n}" } } },
+            { "name": "Verify Signup OTP", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/signup/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup", "verify"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@yopmail.com\",\n  \"otp\": \"1234\"\n}" } } },
+            { "name": "Resend Signup OTP", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/resend-signup-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-signup-otp"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@yopmail.com\"\n}" } } },
+            { "name": "Login", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.accessToken) pm.collectionVariables.set('teacherToken', r.data.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher01@yopmail.com\",\n  \"password\": \"12345678\"\n}" } } },
+            { "name": "Get My Profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/auth/self", "host": ["{{baseUrl}}"], "path": ["api", "auth", "self"] } } },
+            { "name": "Edit Account", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/auth/account/edit", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "edit"] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "Updated Teacher Name", "type": "text" }] } } },
+            { "name": "Buy Plan", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/buyplan", "host": ["{{baseUrl}}"], "path": ["api", "auth", "buyplan"] }, "body": { "mode": "raw", "raw": "{\n  \"plan\": \"premium\"\n}" } } },
+            { "name": "Request Password Reset", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/password/request", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "request"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher01@yopmail.com\"\n}" } } },
+            { "name": "Verify Reset OTP", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/password/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "verify"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher01@yopmail.com\",\n  \"otp\": \"1234\"\n}" } } },
+            { "name": "Set New Password", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/password/reset", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "reset"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher01@yopmail.com\",\n  \"otp\": \"1234\",\n  \"newPassword\": \"12345678\"\n}" } } },
+            { "name": "Resend Reset OTP", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/auth/resend-reset-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-reset-otp"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher01@yopmail.com\"\n}" } } },
+            { "name": "Delete Account", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/auth/account/delete", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "delete"] } } }
+          ]
         },
         {
-          "name": "Verify Signup OTP",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('teacherToken', r.data.accessToken);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/signup/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "signup", "verify"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\"\n}" }
-          }
+          "name": "Students",
+          "item": [
+            { "name": "List Students", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] } } },
+            { "name": "Create Student", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "John Student", "type": "text" }, { "key": "email", "value": "john1@yopmaill.com", "type": "text" }, { "key": "code", "value": "1234", "type": "text" }, { "key": "age", "value": "10", "type": "text" }] } } },
+            { "name": "Edit Student", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "John Updated", "type": "text" }] } } },
+            { "name": "Delete Student", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] } } }
+          ]
         },
         {
-          "name": "Resend Signup OTP",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/resend-signup-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-signup-otp"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
-          }
+          "name": "Token Boards",
+          "item": [
+            { "name": "Create Token Board", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data._id) pm.collectionVariables.set('tokenBoardId', r.data._id);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Math Stars\",\n  \"tokens\": [\n    { \"index\": 1 },\n    { \"index\": 2 },\n    { \"index\": 3 },\n    { \"index\": 4 },\n    { \"index\": 5 }\n  ],\n  \"rewardUrl\": \"https://example.com/reward.jpg\",\n  \"rewardName\": \"Gold Star\"\n}" } } },
+            { "name": "List Token Boards", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards"] } } },
+            { "name": "Get Token Board", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] } } },
+            { "name": "Update Token Board", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Math Stars Updated\",\n  \"rewardUrl\": \"https://example.com/new-reward.jpg\"\n}" } } },
+            { "name": "Delete Token Board", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] } } },
+            { "name": "Assign Token Board to Students", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0 && r.data[0].studentBoardId) pm.collectionVariables.set('studentTokenBoardId', r.data[0].studentBoardId);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "List Assigned Boards", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}", "assigned"] } } }
+          ]
         },
         {
-          "name": "Login",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('teacherToken', r.data.accessToken);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\"\n}" }
-          }
+          "name": "Picture Schedules",
+          "item": [
+            { "name": "Create Picture Schedule", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data._id) pm.collectionVariables.set('pictureScheduleId', r.data._id);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Morning Routine\",\n  \"pictures\": [\n    \"https://example.com/pic1.jpg\",\n    \"https://example.com/pic2.jpg\",\n    \"https://example.com/pic3.jpg\"\n  ],\n  \"rewardPicture\": \"https://example.com/reward.jpg\",\n  \"rewardName\": \"Morning Star\"\n}" } } },
+            { "name": "List Picture Schedules", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules"] } } },
+            { "name": "Get Picture Schedule", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules", "{{pictureScheduleId}}"] } } },
+            { "name": "Update Picture Schedule", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules", "{{pictureScheduleId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Morning Routine Updated\",\n  \"rewardName\": \"Super Star\"\n}" } } },
+            { "name": "Delete Picture Schedule", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules", "{{pictureScheduleId}}"] } } },
+            { "name": "Assign Picture Schedule to Students", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0 && r.data[0].studentScheduleId) pm.collectionVariables.set('studentPictureScheduleId', r.data[0].studentScheduleId);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules/{{pictureScheduleId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules", "{{pictureScheduleId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "List Assigned Schedules", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/picture-schedules/{{pictureScheduleId}}/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "picture-schedules", "{{pictureScheduleId}}", "assigned"] } } }
+          ]
         },
         {
-          "name": "Buy Plan",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/buyplan", "host": ["{{baseUrl}}"], "path": ["api", "auth", "buyplan"] },
-            "body": { "mode": "raw", "raw": "{\n  \"paymentSuccessfull\": true,\n  \"plan\": \"individual\"\n}" },
-            "description": "plan: individual (5 students), family (15), company (30)"
-          }
+          "name": "First/Then Charts",
+          "item": [
+            { "name": "Create Chart", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data._id) pm.collectionVariables.set('firstThenChartId', r.data._id);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"first and then 1\",\n  \"first\": { \"image\": \"https://example.com/restaurant.jpg\", \"label\": \"Restaurant\" },\n  \"next\": { \"image\": \"https://example.com/feed-dog.jpg\", \"label\": \"Feed the dog\" },\n  \"reward\": { \"image\": \"https://example.com/computer.jpg\", \"label\": \"Computer\" }\n}" } } },
+            { "name": "List Charts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then"] } } },
+            { "name": "Get Chart", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then/{{firstThenChartId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then", "{{firstThenChartId}}"] } } },
+            { "name": "Update Chart", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then/{{firstThenChartId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then", "{{firstThenChartId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Chart\",\n  \"reward\": { \"image\": \"https://example.com/new-reward.jpg\", \"label\": \"New Reward\" }\n}" } } },
+            { "name": "Delete Chart", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then/{{firstThenChartId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then", "{{firstThenChartId}}"] } } },
+            { "name": "Assign Chart to Students", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0 && r.data[0].chartId) pm.collectionVariables.set('studentFirstThenChartId', r.data[0].chartId);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then/{{firstThenChartId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then", "{{firstThenChartId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "List Assigned Charts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/first-then/{{firstThenChartId}}/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "first-then", "{{firstThenChartId}}", "assigned"] } } }
+          ]
         },
         {
-          "name": "Request Password Reset",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/password/request", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "request"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
-          }
+          "name": "Visual Timer",
+          "item": [
+            { "name": "Create Visual Timer", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data._id) pm.collectionVariables.set('visualTimerId', r.data._id);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Section 2\",\n  \"durationMinutes\": 30\n}" } } },
+            { "name": "List Visual Timers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer"] } } },
+            { "name": "Get Visual Timer", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer/{{visualTimerId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer", "{{visualTimerId}}"] } } },
+            { "name": "Update Visual Timer", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer/{{visualTimerId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer", "{{visualTimerId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Timer\",\n  \"durationMinutes\": 45\n}" } } },
+            { "name": "Delete Visual Timer", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer/{{visualTimerId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer", "{{visualTimerId}}"] } } },
+            { "name": "Assign Visual Timer to Students", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0 && r.data[0].timerId) pm.collectionVariables.set('studentVisualTimerId', r.data[0].timerId);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer/{{visualTimerId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer", "{{visualTimerId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "List Assigned Timers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/visual-timer/{{visualTimerId}}/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "visual-timer", "{{visualTimerId}}", "assigned"] } } }
+          ]
         },
         {
-          "name": "Verify Reset OTP",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/password/verify", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "verify"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\"\n}" }
-          }
+          "name": "Social Narratives",
+          "item": [
+            { "name": "Assign Social Narrative", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0 && r.data[0].narrativeId) pm.collectionVariables.set('studentNarrativeId', r.data[0].narrativeId);"] } }], "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/social-narrative/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "social-narrative", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"socialNarrativeId\": \"narrative_001\",\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "List Assigned Narratives", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/social-narrative/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "social-narrative", "assigned"] } } },
+            { "name": "Unassign Social Narrative", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/social-narrative/unassign/{{studentNarrativeId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "social-narrative", "unassign", "{{studentNarrativeId}}"] } } }
+          ]
         },
         {
-          "name": "Set New Password",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/password/reset", "host": ["{{baseUrl}}"], "path": ["api", "auth", "password", "reset"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"otp\": \"1234\",\n  \"newPassword\": \"newpassword123\"\n}" }
-          }
+          "name": "Tasks (Unified)",
+          "item": [
+            { "name": "Get All Tasks", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks"] } } },
+            { "name": "Get All Assigned Tasks", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "assigned"] } } },
+            { "name": "Get Task by ID (Token Board)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/tokenboard/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "tokenboard", "{{tokenBoardId}}"] } } },
+            { "name": "Get Task by ID (Picture Schedule)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/pictureschedule/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "pictureschedule", "{{pictureScheduleId}}"] } } },
+            { "name": "Update Task (Token Board)", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/tokenboard/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "tokenboard", "{{tokenBoardId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Title\",\n  \"rewardUrl\": \"https://example.com/reward.jpg\",\n  \"rewardName\": \"Gold Star\"\n}" } } },
+            { "name": "Update Task (Picture Schedule)", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/pictureschedule/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "pictureschedule", "{{pictureScheduleId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Title\",\n  \"rewardName\": \"Super Star\"\n}" } } },
+            { "name": "Delete Task (Token Board)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/tokenboard/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "tokenboard", "{{tokenBoardId}}"] } } },
+            { "name": "Delete Task (Picture Schedule)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/pictureschedule/{{pictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "pictureschedule", "{{pictureScheduleId}}"] } } },
+            { "name": "Assign Task (Token Board)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/tokenboard/{{tokenBoardId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "tokenboard", "{{tokenBoardId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "Assign Task (Picture Schedule)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/pictureschedule/{{pictureScheduleId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "pictureschedule", "{{pictureScheduleId}}", "assign"] }, "body": { "mode": "raw", "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}" } } },
+            { "name": "Unassign Task (Token Board)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/tokenboard/unassign/{{studentTokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "tokenboard", "unassign", "{{studentTokenBoardId}}"] } } },
+            { "name": "Unassign Task (Picture Schedule)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/teacher/tasks/pictureschedule/unassign/{{studentPictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tasks", "pictureschedule", "unassign", "{{studentPictureScheduleId}}"] } } }
+          ]
         },
         {
-          "name": "Resend Reset OTP",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/resend-reset-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "resend-reset-otp"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"teacher@example.com\"\n}" }
-          }
-        },
-        {
-          "name": "Edit Account",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/account/edit", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "edit"] },
-            "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "John Updated", "type": "text" }, { "key": "email", "value": "updated@example.com", "type": "text" }, { "key": "profileImage", "type": "file", "src": "" }] }
-          }
-        },
-        {
-          "name": "Delete Account",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/account/delete", "host": ["{{baseUrl}}"], "path": ["api", "auth", "account", "delete"] }
-          }
+          "name": "Upload",
+          "item": [
+            { "name": "Upload Image", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }], "url": { "raw": "{{baseUrl}}/api/upload/image", "host": ["{{baseUrl}}"], "path": ["api", "upload", "image"] }, "body": { "mode": "formdata", "formdata": [{ "key": "image", "type": "file", "src": "" }] } } }
+          ]
         }
       ]
     },
     {
-      "name": "2. Teacher - Students",
-      "description": "Teacher manages student profiles. Base: /api/students. Requires teacher JWT.",
+      "name": "STUDENT",
       "item": [
         {
-          "name": "List Students",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }
-          }
+          "name": "Auth",          "item": [
+            { "name": "Student Login", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.accessToken) pm.collectionVariables.set('studentToken', r.data.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student-auth/login", "host": ["{{baseUrl}}"], "path": ["api", "student-auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"john1@yopmaill.com\",\n  \"code\": \"1234\"\n}" } } },
+            { "name": "Get My Profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student-auth/self", "host": ["{{baseUrl}}"], "path": ["api", "student-auth", "self"] } } }
+          ]
         },
         {
-          "name": "Create Student",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?._id) pm.collectionVariables.set('studentId', r.data._id);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] },
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                { "key": "name", "value": "Alice", "type": "text" },
-                { "key": "age", "value": "7", "type": "text" },
-                { "key": "email", "value": "student@example.com", "type": "text" },
-                { "key": "code", "value": "1234", "type": "text", "description": "4-digit numeric PIN" },
-                { "key": "profileImage", "type": "file", "src": "" }
-              ]
-            },
-            "description": "studentId auto-saved."
-          }
+          "name": "Token Boards",
+          "item": [
+            { "name": "Get My Active Token Boards", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentTokenBoardId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tokenboard", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard"] } } },
+            { "name": "Get All My Token Boards", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tokenboard/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "all"] } } },
+            { "name": "Get Token Board By ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tokenboard/{{studentTokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "{{studentTokenBoardId}}"] } } },
+            { "name": "Complete a Token", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/tokenboard/token", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "token"] }, "body": { "mode": "raw", "raw": "{\n  \"boardId\": \"{{studentTokenBoardId}}\",\n  \"index\": 1\n}" } } },
+            { "name": "Complete Entire Board", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/tokenboard/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "complete"] }, "body": { "mode": "raw", "raw": "{\n  \"boardId\": \"{{studentTokenBoardId}}\"\n}" } } }
+          ]
         },
         {
-          "name": "Edit Student",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] },
-            "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "Alice Updated", "type": "text" }, { "key": "age", "value": "8", "type": "text" }, { "key": "code", "value": "5678", "type": "text" }, { "key": "profileImage", "type": "file", "src": "" }] }
-          }
+          "name": "Picture Schedules",
+          "item": [
+            { "name": "Get My Active Picture Schedules", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentPictureScheduleId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/picture-schedule", "host": ["{{baseUrl}}"], "path": ["api", "student", "picture-schedule"] } } },
+            { "name": "Get All My Picture Schedules", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/picture-schedule/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "picture-schedule", "all"] } } },
+            { "name": "Get Picture Schedule By ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/picture-schedule/{{studentPictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "picture-schedule", "{{studentPictureScheduleId}}"] } } },
+            { "name": "Complete a Picture", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/picture-schedule/picture", "host": ["{{baseUrl}}"], "path": ["api", "student", "picture-schedule", "picture"] }, "body": { "mode": "raw", "raw": "{\n  \"scheduleId\": \"{{studentPictureScheduleId}}\",\n  \"index\": 1\n}" } } },
+            { "name": "Complete Entire Schedule", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/picture-schedule/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "picture-schedule", "complete"] }, "body": { "mode": "raw", "raw": "{\n  \"scheduleId\": \"{{studentPictureScheduleId}}\"\n}" } } }
+          ]
         },
         {
-          "name": "Delete Student",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "3. Teacher - Token Boards",
-      "description": "Teacher creates token board templates and assigns them to students. Base: /api/teacher/tokenboards. Requires teacher JWT.",
-      "item": [
-        {
-          "name": "Create Token Board",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?._id) pm.collectionVariables.set('tokenBoardId', r.data._id);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Week 1 Tasks\",\n  \"tokens\": [\n    { \"index\": 1 },\n    { \"index\": 2 },\n    { \"index\": 3 }\n  ],\n  \"rewardUrl\": \"https://example.com/reward.jpg\"\n}"
-            },
-            "description": "title is optional. tokens: 1–5 items, each with just an index. rewardUrl is required. tokenBoardId auto-saved."
-          }
+          "name": "First/Then Charts",
+          "item": [
+            { "name": "Get My Active Charts", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentFirstThenChartId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/first-then", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then"] } } },
+            { "name": "Get All My Charts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/first-then/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then", "all"] } } },
+            { "name": "Get Chart By ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/first-then/{{studentFirstThenChartId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then", "{{studentFirstThenChartId}}"] } } },
+            { "name": "Complete First Step", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/first-then/first", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then", "first"] }, "body": { "mode": "raw", "raw": "{\n  \"chartId\": \"{{studentFirstThenChartId}}\"\n}" } } },
+            { "name": "Complete Next Step", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/first-then/next", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then", "next"] }, "body": { "mode": "raw", "raw": "{\n  \"chartId\": \"{{studentFirstThenChartId}}\"\n}" } } },
+            { "name": "Complete Entire Chart", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/first-then/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "first-then", "complete"] }, "body": { "mode": "raw", "raw": "{\n  \"chartId\": \"{{studentFirstThenChartId}}\"\n}" } } }
+          ]
         },
         {
-          "name": "List Token Boards",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards"] }
-          }
+          "name": "Visual Timer",
+          "item": [
+            { "name": "Get My Active Timers", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentVisualTimerId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/visual-timer", "host": ["{{baseUrl}}"], "path": ["api", "student", "visual-timer"] } } },
+            { "name": "Get All My Timers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/visual-timer/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "visual-timer", "all"] } } },
+            { "name": "Get Timer By ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/visual-timer/{{studentVisualTimerId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "visual-timer", "{{studentVisualTimerId}}"] } } },
+            { "name": "Complete Timer", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/visual-timer/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "visual-timer", "complete"] }, "body": { "mode": "raw", "raw": "{\n  \"timerId\": \"{{studentVisualTimerId}}\"\n}" } } }
+          ]
         },
         {
-          "name": "Get Token Board",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] }
-          }
+          "name": "Social Narratives",
+          "item": [
+            { "name": "Get My Active Narratives", "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if(r.data && r.data.length > 0) pm.collectionVariables.set('studentNarrativeId', r.data[0]._id);"] } }], "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/social-narrative", "host": ["{{baseUrl}}"], "path": ["api", "student", "social-narrative"] } } },
+            { "name": "Get All My Narratives", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/social-narrative/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "social-narrative", "all"] } } },
+            { "name": "Get Narrative By ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/social-narrative/{{studentNarrativeId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "social-narrative", "{{studentNarrativeId}}"] } } },
+            { "name": "Complete Narrative", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{baseUrl}}/api/student/social-narrative/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "social-narrative", "complete"] }, "body": { "mode": "raw", "raw": "{\n  \"narrativeId\": \"{{studentNarrativeId}}\"\n}" } } }
+          ]
         },
         {
-          "name": "Update Token Board",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Week 1 Tasks Updated\",\n  \"tokens\": [\n    { \"index\": 1 },\n    { \"index\": 2 }\n  ],\n  \"rewardUrl\": \"https://example.com/new-reward.jpg\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Delete Token Board",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}"] }
-          }
-        },
-        {
-          "name": "Assign Token Board to Students",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}/assign", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}", "assign"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}"
-            },
-            "description": "Assigns a copy of the board to each student. Students with an active board are skipped."
-          }
-        },
-        {
-          "name": "List Assigned Boards (Student Progress View)",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/teacher/tokenboards/{{tokenBoardId}}/assigned", "host": ["{{baseUrl}}"], "path": ["api", "teacher", "tokenboards", "{{tokenBoardId}}", "assigned"] },
-            "description": "Returns all students assigned to this board with their progress."
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Student Auth",
-      "description": "Student login. Base: /api/student-auth. Public — no token needed.",
-      "item": [
-        {
-          "name": "Student Login",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?.accessToken) pm.collectionVariables.set('studentToken', r.data.accessToken);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/student-auth/login", "host": ["{{baseUrl}}"], "path": ["api", "student-auth", "login"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@example.com\",\n  \"code\": \"1234\"\n}" },
-            "description": "Returns JWT with role: student. studentToken auto-saved."
-          }
-        }
-      ]
-    },
-    {
-      "name": "5. Student - Token Board",
-      "description": "Student views and updates their assigned token board. Base: /api/student/tokenboard. Requires student JWT.",
-      "item": [
-        {
-          "name": "Get My Active Token Board",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/tokenboard", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard"] },
-            "description": "Returns the current active (incomplete) token board assigned to the student."
-          }
-        },
-        {
-          "name": "Get All My Token Boards",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/tokenboard/all", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "all"] },
-            "description": "Returns all boards including completed ones."
-          }
-        },
-        {
-          "name": "Complete a Token",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/student/tokenboard/token", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "token"] },
-            "body": { "mode": "raw", "raw": "{\n  \"index\": 1\n}" },
-            "description": "Marks a specific token as completed. index: 1–5."
-          }
-        },
-        {
-          "name": "Complete Entire Board",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/tokenboard/complete", "host": ["{{baseUrl}}"], "path": ["api", "student", "tokenboard", "complete"] },
-            "description": "Marks the entire board as complete and records completedAt timestamp."
-          }
-        }
-      ]
-    },
-    {
-      "name": "6. Student Progress",
-      "description": "Teacher manages progress entries per student. Base: /api/student/:studentId/progress. Requires teacher JWT.",
-      "item": [
-        {
-          "name": "Save Progress (URL images)",
-          "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json(); if (r.data?._id) pm.collectionVariables.set('progressId', r.data._id);"], "type": "text/javascript" } }],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress"] },
-            "body": { "mode": "raw", "raw": "{\n  \"images\": [\n    { \"index\": 0, \"url\": \"https://example.com/image1.jpg\" },\n    { \"index\": 1, \"url\": \"https://example.com/image2.jpg\" }\n  ],\n  \"rewardImage\": \"https://example.com/reward.jpg\"\n}" },
-            "description": "progressId auto-saved."
-          }
-        },
-        {
-          "name": "Save Progress (Upload to S3)",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/upload", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "upload"] },
-            "body": { "mode": "formdata", "formdata": [{ "key": "images", "type": "file", "src": "" }, { "key": "images", "type": "file", "src": "" }] },
-            "description": "Upload up to 10 images. Stored in S3."
-          }
-        },
-        {
-          "name": "Get All Progress",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress?limit=10&skip=0", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress"], "query": [{ "key": "limit", "value": "10" }, { "key": "skip", "value": "0" }] }
-          }
-        },
-        {
-          "name": "Get Single Progress",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] }
-          }
-        },
-        {
-          "name": "Update Progress",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] },
-            "body": { "mode": "raw", "raw": "{\n  \"images\": [\n    { \"index\": 0, \"url\": \"https://example.com/updated.jpg\" }\n  ],\n  \"rewardImage\": \"https://example.com/new-reward.jpg\"\n}" }
-          }
-        },
-        {
-          "name": "Delete Progress",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}"] }
-          }
-        },
-        {
-          "name": "Add Reward Image",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
-            "url": { "raw": "{{baseUrl}}/api/student/{{studentId}}/progress/{{progressId}}/reward", "host": ["{{baseUrl}}"], "path": ["api", "student", "{{studentId}}", "progress", "{{progressId}}", "reward"] },
-            "body": { "mode": "formdata", "formdata": [{ "key": "rewardImage", "type": "file", "src": "" }] }
-          }
+          "name": "Tasks (Unified)",
+          "item": [
+            { "name": "Get All My Tasks", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tasks", "host": ["{{baseUrl}}"], "path": ["api", "student", "tasks"] } } },
+            { "name": "Get My Active Tasks", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tasks/active", "host": ["{{baseUrl}}"], "path": ["api", "student", "tasks", "active"] } } },
+            { "name": "Get My Completed Tasks", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tasks/completed", "host": ["{{baseUrl}}"], "path": ["api", "student", "tasks", "completed"] } } },
+            { "name": "Get Task By ID (Token Board)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tasks/tokenboard/{{studentTokenBoardId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "tasks", "tokenboard", "{{studentTokenBoardId}}"] } } },
+            { "name": "Get Task By ID (Picture Schedule)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }], "url": { "raw": "{{baseUrl}}/api/student/tasks/pictureschedule/{{studentPictureScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "student", "tasks", "pictureschedule", "{{studentPictureScheduleId}}"] } } }
+          ]
         }
       ]
     }
